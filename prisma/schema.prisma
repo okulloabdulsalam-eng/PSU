@@ -1,0 +1,259 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  FILL_BLANK
+}
+
+enum PaymentMethod {
+  MTN_MOMO
+  AIRTEL_MONEY
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  hashedPassword String?
+  image         String?
+  role          Role      @default(STUDENT)
+  plan          Plan      @default(FREE)
+  planExpiresAt DateTime?
+  streakDays    Int       @default(0)
+  lastActiveAt  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  progress      Progress[]
+  bookmarks     Bookmark[]
+  quizAttempts  QuizAttempt[]
+  payments      Payment[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Subject {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  icon         String
+  description  String
+  color        String
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  topics Topic[]
+}
+
+model Topic {
+  id           String   @id @default(cuid())
+  subjectId    String
+  title        String
+  slug         String
+  description  String?
+  isPremium    Boolean  @default(false)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  notes     Note[]
+  videos    Video[]
+  questions Question[]
+  progress  Progress[]
+
+  @@unique([subjectId, slug])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  topicId   String
+  title     String
+  content   String   @db.Text
+  isPremium Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic  Topic       @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  images NoteImage[]
+}
+
+model NoteImage {
+  id           String  @id @default(cuid())
+  noteId       String
+  cloudinaryUrl String
+  caption      String?
+  altText      String?
+
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+}
+
+model Video {
+  id           String   @id @default(cuid())
+  topicId      String
+  title        String
+  youtubeId    String
+  description  String?
+  durationSecs Int      @default(0)
+  isPremium    Boolean  @default(false)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id                  String       @id @default(cuid())
+  topicId             String
+  text                String       @db.Text
+  imageUrl            String?
+  explanation         String       @db.Text
+  explanationImageUrl String?
+  isPremium           Boolean      @default(false)
+  difficulty          Difficulty   @default(MEDIUM)
+  type                QuestionType @default(MCQ)
+  pastExamYear        Int?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  options      Option[]
+  quizAttempts QuizAttempt[]
+  bookmarks    Bookmark[]
+}
+
+model Option {
+  id           String  @id @default(cuid())
+  questionId   String
+  text         String
+  isCorrect    Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id               String   @id @default(cuid())
+  userId           String
+  questionId       String
+  selectedOptionId String?
+  isCorrect        Boolean
+  createdAt        DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Progress {
+  id            String   @id @default(cuid())
+  userId        String
+  topicId       String
+  completed     Boolean  @default(false)
+  lastQuizScore Float?
+  updatedAt     DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+}
+
+model Bookmark {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String?
+  createdAt  DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  amount        Float
+  currency      String        @default("UGX")
+  method        PaymentMethod
+  txRef         String        @unique
+  status        PaymentStatus @default(PENDING)
+  planPurchased Plan          @default(PREMIUM)
+  months        Int
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

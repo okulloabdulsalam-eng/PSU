@@ -1,0 +1,260 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap");
+
+:root {
+  --font-sora: "Sora", sans-serif;
+  --font-source-serif: "Source Serif 4", serif;
+  --font-dm-sans: "DM Sans", sans-serif;
+
+  --primary: #1a56db;
+  --accent-green: #16a34a;
+  --accent-gold: #f59e0b;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --dark: #0f172a;
+  --muted: #94a3b8;
+  --premium: #7c3aed;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-dark font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sora font-semibold;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface rounded-2xl shadow-card border border-border;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-sans font-semibold
+           px-6 py-3 rounded-xl transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           min-h-[44px] inline-flex items-center justify-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply bg-surface hover:bg-background text-dark font-sans font-semibold
+           px-6 py-3 rounded-xl border border-border transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           min-h-[44px] inline-flex items-center justify-center gap-2;
+  }
+
+  .badge-easy {
+    @apply bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full;
+  }
+
+  .badge-medium {
+    @apply bg-amber-100 text-amber-700 text-xs font-semibold px-2 py-0.5 rounded-full;
+  }
+
+  .badge-hard {
+    @apply bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full;
+  }
+
+  .badge-premium {
+    @apply bg-purple-100 text-purple-700 text-xs font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1;
+  }
+
+  .subject-card-border::before {
+    content: "";
+    @apply absolute top-0 left-0 right-0 h-1 rounded-t-2xl;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-accent-purple bg-clip-text text-transparent;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* TipTap editor styles */
+.ProseMirror {
+  font-family: var(--font-source-serif);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--dark);
+  outline: none;
+}
+
+.ProseMirror h1 {
+  @apply text-3xl font-sora font-bold mt-8 mb-4;
+}
+.ProseMirror h2 {
+  @apply text-2xl font-sora font-semibold mt-6 mb-3;
+}
+.ProseMirror h3 {
+  @apply text-xl font-sora font-semibold mt-4 mb-2;
+}
+.ProseMirror p {
+  @apply mb-4;
+}
+.ProseMirror ul {
+  @apply list-disc pl-6 mb-4 space-y-1;
+}
+.ProseMirror ol {
+  @apply list-decimal pl-6 mb-4 space-y-1;
+}
+.ProseMirror blockquote {
+  @apply border-l-4 border-primary-500 pl-4 italic text-muted my-4;
+}
+.ProseMirror code {
+  @apply bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+.ProseMirror pre {
+  @apply bg-gray-900 text-gray-100 p-4 rounded-xl my-4 overflow-x-auto;
+}
+.ProseMirror hr {
+  @apply border-border my-8;
+}
+.ProseMirror table {
+  @apply w-full border-collapse mb-4;
+}
+.ProseMirror th {
+  @apply bg-primary-50 border border-border px-4 py-2 text-left font-semibold;
+}
+.ProseMirror td {
+  @apply border border-border px-4 py-2;
+}
+.ProseMirror img {
+  @apply rounded-xl my-4 max-w-full;
+}
+
+/* Note content styles */
+.note-content {
+  font-family: var(--font-source-serif);
+  font-size: 1.0625rem;
+  line-height: 1.9;
+  color: var(--dark);
+}
+
+.note-content h1 {
+  font-family: var(--font-sora);
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+}
+.note-content h2 {
+  font-family: var(--font-sora);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+}
+.note-content h3 {
+  font-family: var(--font-sora);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem;
+}
+.note-content p {
+  margin-bottom: 1rem;
+}
+.note-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.note-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.note-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.note-content th {
+  background: #eef3fd;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+.note-content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+}
+.note-content img {
+  border-radius: 0.75rem;
+  max-width: 100%;
+  margin: 1rem 0;
+}
+.note-content blockquote {
+  border-left: 4px solid #1a56db;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #94a3b8;
+  margin: 1rem 0;
+}
+
+/* PWA offline banner */
+.offline-banner {
+  @apply bg-amber-50 border-b border-amber-200 text-amber-800 text-sm text-center py-2 px-4;
+}
+
+/* Blur overlay for premium content */
+.premium-blur {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Progress ring */
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.5s ease;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-surface border-t border-border z-50
+         flex items-center justify-around md:hidden;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+.bottom-nav-item {
+  @apply flex flex-col items-center gap-1 py-2 px-4 min-h-[56px]
+         text-muted transition-colors duration-200;
+}
+
+.bottom-nav-item.active {
+  @apply text-primary-500;
+}
