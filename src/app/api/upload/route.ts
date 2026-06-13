@@ -1,7 +1,8 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { cloudinary } from "@/lib/cloudinary";
+import { getCloudinary } from "@/lib/cloudinary";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -17,12 +18,15 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(bytes);
   const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-  const result = await cloudinary.uploader.upload(base64, {
+  const result = await getCloudinary().uploader.upload(base64, {
     folder: "pharmaprep",
     resource_type: "auto",
     quality: "auto",
     fetch_format: "auto",
   });
 
-  return NextResponse.json({ url: result.secure_url, publicId: result.public_id });
+  return NextResponse.json({
+    url: result.secure_url,
+    publicId: result.public_id,
+  });
 }

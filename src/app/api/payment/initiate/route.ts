@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -6,11 +7,13 @@ import { PRICING_PLANS } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { months, method, phone } = await req.json();
   const plan = PRICING_PLANS.find((p) => p.months === months);
-  if (!plan) return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+  if (!plan)
+    return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
 
   const txRef = `PP-${session.user.id}-${Date.now()}`;
 
@@ -65,5 +68,8 @@ export async function POST(req: NextRequest) {
   if (fwData.status === "success") {
     return NextResponse.json({ link: fwData.data.link, txRef });
   }
-  return NextResponse.json({ error: "Payment initiation failed" }, { status: 500 });
+  return NextResponse.json(
+    { error: "Payment initiation failed" },
+    { status: 500 },
+  );
 }
