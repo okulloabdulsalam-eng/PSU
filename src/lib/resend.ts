@@ -1,6 +1,20 @@
 import { Resend } from "resend";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY ?? "re_placeholder");
+  }
+  return _resend;
+}
+
+export const resend = {
+  emails: {
+    send: (payload: Parameters<Resend["emails"]["send"]>[0]) =>
+      getResend().emails.send(payload),
+  },
+};
 
 export async function sendPaymentConfirmationEmail(params: {
   to: string;
