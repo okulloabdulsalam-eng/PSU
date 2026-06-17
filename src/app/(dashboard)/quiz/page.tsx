@@ -7,6 +7,15 @@ import { QuizClient } from "@/components/quiz/quiz-client";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Quiz" };
 
+function shuffle<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export default async function QuizPage({
   searchParams,
 }: {
@@ -70,7 +79,7 @@ export default async function QuizPage({
 
   return (
     <QuizClient
-      questions={questions}
+      questions={shuffle(questions)}
       mode={mode as "practice" | "mock"}
       session={session}
     />

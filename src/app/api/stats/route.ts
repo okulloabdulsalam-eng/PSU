@@ -10,13 +10,19 @@ export async function GET() {
     if (cached) return NextResponse.json(cached);
   } catch {}
 
-  const [students, questions, videos] = await Promise.all([
+  const [students, questions, videos, totalAttempts, correctAttempts] = await Promise.all([
     prisma.user.count({ where: { role: "STUDENT" } }),
     prisma.question.count(),
     prisma.video.count(),
+    prisma.quizAttempt.count(),
+    prisma.quizAttempt.count({ where: { isCorrect: true } }),
   ]);
 
-  const stats = { students, questions, videos, passRate: 87 };
+  const passRate = totalAttempts > 0
+    ? Math.round((correctAttempts / totalAttempts) * 100)
+    : 0;
+
+  const stats = { students, questions, videos, passRate };
 
   try {
     await redis.set(CACHE_KEYS.stats, stats, { ex: CACHE_TTL.stats });

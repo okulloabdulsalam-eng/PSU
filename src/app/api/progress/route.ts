@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
       question: { include: { topic: { include: { subject: true } } } },
     },
     orderBy: { createdAt: "desc" },
+    take: 200,
   });
 
   const user = await prisma.user.findUnique({

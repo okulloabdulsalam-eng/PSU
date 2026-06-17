@@ -7,7 +7,6 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -214,6 +213,9 @@ model QuizAttempt {
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([questionId])
 }
 
 model Progress {
@@ -240,6 +242,7 @@ model Bookmark {
   question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, questionId])
+  @@index([userId])
 }
 
 model Payment {
@@ -256,4 +259,7 @@ model Payment {
   updatedAt     DateTime      @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([txRef])
 }
